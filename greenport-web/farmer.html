@@ -186,12 +186,14 @@
   const EMOJI_OPTIONS = ["🍎", "🍐", "🍅", "🥬", "🍊", "🍇", "🍑", "🥕", "🧄", "🍆"];
 
   let editingId = null; // product id being edited, or "new"
+  let fetchedRealStats = null; // 이번 폼 세션에서 실측 조회로 받아온 값 (저장 시 그대로 붙는다)
   const formSlot = document.getElementById("form-slot");
   const catalogEl = document.getElementById("farmer-catalog");
 
   function productForm(p) {
     const isNew = p === null;
     const v = p || { name: "", emoji: "🍎", category: "과일", price: "", stock: "", desc: "", water: "", soil: "", carbon: "" };
+    const farmInfo = gpGetFarms().find(f => f.name === activeFarm);
     return `
       <div class="form-card">
         <div class="form-grid">
@@ -207,10 +209,19 @@
           </div>
           <div><label>가격(원)</label><input id="f-price" type="number" min="0" step="500" value="${v.price}"></div>
           <div><label>재고(세트)</label><input id="f-stock" type="number" min="0" step="1" value="${v.stock}"></div>
-          <div><label>물 절감(L, 선택)</label><input id="f-water" type="number" min="0" value="${v.water}"></div>
-          <div><label>토양 보호(kg, 선택)</label><input id="f-soil" type="number" min="0" step="0.1" value="${v.soil}"></div>
-          <div><label>탄소 저감(g, 선택)</label><input id="f-carbon" type="number" min="0" value="${v.carbon}"></div>
+          <div><label>물 절감(L, 선택·추정치)</label><input id="f-water" type="number" min="0" value="${v.water}"></div>
+          <div><label>토양 보호(kg, 선택·추정치)</label><input id="f-soil" type="number" min="0" step="0.1" value="${v.soil}"></div>
+          <div><label>탄소 저감(g, 선택·추정치)</label><input id="f-carbon" type="number" min="0" value="${v.carbon}"></div>
           <div style="grid-column:1/-1"><label>상품 설명</label><textarea id="f-desc" placeholder="구매를 결정할 임직원에게 보여줄 소개 문구">${v.desc}</textarea></div>
+          ${farmInfo?.facilityId ? `
+          <div style="grid-column:1/-1;border-top:1px dashed var(--border);padding-top:10px;">
+            <label>출하일(채취일) — 밀양 혁신밸리 실측 데이터 자동 조회</label>
+            <div style="display:flex;gap:8px;">
+              <input id="f-harvest-date" type="date" style="flex:0 0 auto;">
+              <button type="button" id="f-fetch-sensor" class="btn-cancel">🛰️ 실측 데이터 조회</button>
+            </div>
+            <div id="f-sensor-preview" style="font-size:11px;color:var(--muted);margin-top:6px;">${fetchedRealStats ? `✅ 조회됨: 내부온도 ${fetchedRealStats.tempMin}~${fetchedRealStats.tempMax}℃ · 습도 ${fetchedRealStats.humidityMin}~${fetchedRealStats.humidityMax}%` : ""}</div>
+          </div>` : ""}
         </div>
         <div class="form-actions">
           <button class="btn-cancel" id="f-cancel">취소</button>
@@ -222,9 +233,35 @@
   function renderForm() {
     if (editingId === null) { formSlot.innerHTML = ""; return; }
     const p = editingId === "new" ? null : products.find(p => p.id === editingId);
+    if (editingId !== renderForm._lastId) fetchedRealStats = p?.realStats || null;
+    renderForm._lastId = editingId;
     formSlot.innerHTML = productForm(p);
     document.getElementById("f-cancel").addEventListener("click", () => { editingId = null; render(); });
     document.getElementById("f-save").addEventListener("click", () => saveForm(p));
+    const fetchBtn = document.getElementById("f-fetch-sensor");
+    if (fetchBtn) fetchBtn.addEventListener("click", () => fetchSensorData(p));
+  }
+
+  async function fetchSensorData(p) {
+    const farmInfo = gpGetFarms().find(f => f.name === activeFarm);
+    const date = document.getElementById("f-harvest-date").value;
+    const preview = document.getElementById("f-sensor-preview");
+    if (!date) { preview.textContent = "⚠️ 출하일을 먼저 선택해주세요."; return; }
+    preview.textContent = "🛰️ 혁신밸리 API 조회 중...";
+    try {
+      const res = await fetch(`/.netlify/functions/sensor-data?facilityId=${farmInfo.facilityId}&date=${date}`);
+      const data = await res.json();
+      if (!data.available) {
+        preview.textContent = "❌ 해당 날짜의 실측 데이터가 없습니다. 다른 날짜로 시도해보세요.";
+        fetchedRealStats = null;
+        return;
+      }
+      fetchedRealStats = { ...data, note: `농가 등록 출하일(${date}) 기준 실측` };
+      preview.textContent = `✅ 조회됨: 내부온도 ${data.tempMin}~${data.tempMax}℃ · 습도 ${data.humidityMin}~${data.humidityMax}%`;
+      toast("실측 데이터를 불러왔어요");
+    } catch (e) {
+      preview.textContent = "❌ 조회 실패: 중계 서버 오류. 잠시 후 다시 시도해주세요.";
+    }
   }
 
   function saveForm(existing) {
@@ -242,6 +279,7 @@
       soil: Number(document.getElementById("f-soil").value) || 0,
       carbon: Number(document.getElementById("f-carbon").value) || 0,
       desc: document.getElementById("f-desc").value.trim(),
+      realStats: fetchedRealStats,
     };
 
     if (existing) {
@@ -264,6 +302,7 @@
     }
     gpSaveProducts(products);
     editingId = null;
+    fetchedRealStats = null;
     render();
   }
 

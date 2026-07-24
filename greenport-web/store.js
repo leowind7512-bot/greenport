@@ -5,10 +5,12 @@ const GP_KEY_ORDERS = "greenport_orders";
 const GP_KEY_EMPLOYEES = "greenport_employees";
 const GP_KEY_FARMS = "greenport_farms";
 
+// facilityId: 스마트팜코리아 혁신밸리 Open API의 실제 시설 ID. 이 값이 있는 농가만
+// 농가센터에서 "출하일 기준 실측 데이터 조회" 버튼이 동작한다(청정 D농원은 대상 밖).
 const GP_SEED_FARMS = [
-  { id: "F1", name: "밀양 A농원", region: "경상남도 밀양시", measured: true, active: true, certified: false, certNote: "", commissionRate: 0.12 },
-  { id: "F2", name: "밀양 B농원", region: "경상남도 밀양시", measured: true, active: true, certified: false, certNote: "", commissionRate: 0.12 },
-  { id: "F3", name: "청정 D농원", region: "충청남도 논산시", measured: false, active: true, certified: false, certNote: "", commissionRate: 0.15 },
+  { id: "F1", name: "밀양 A농원", region: "경상남도 밀양시", measured: true, active: true, certified: false, certNote: "", commissionRate: 0.12, facilityId: "C010904_02_05" },
+  { id: "F2", name: "밀양 B농원", region: "경상남도 밀양시", measured: true, active: true, certified: false, certNote: "", commissionRate: 0.12, facilityId: "C010904_02_02" },
+  { id: "F3", name: "청정 D농원", region: "충청남도 논산시", measured: false, active: true, certified: false, certNote: "", commissionRate: 0.15, facilityId: null },
 ];
 
 const GP_SEED_EMPLOYEES = [
