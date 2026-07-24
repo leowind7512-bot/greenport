@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>그린포트 총무센터</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root {
+    --admin: #2c4a7c;
+    --admin-dark: #1c3159;
+    --admin-light: #e8eefa;
+    --green: #2f6b3a;
+    --amber: #c96a1f;
+    --red: #d9364f;
+    --ink: #1c1c1c;
+    --muted: #6b6b6b;
+    --border: #e6e6e0;
+    --bg: #faf9f5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Pretendard, -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+
+  .nav {
+    position: sticky; top: 0; z-index: 30; background: #fff; border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 17px; color: var(--admin-dark); }
+  .nav .brand .logo { width: 30px; height: 30px; border-radius: 9px; background: var(--admin); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .nav .links { display: flex; gap: 14px; font-size: 12.5px; }
+  .nav .links a { color: var(--muted); text-decoration: none; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--admin-dark), var(--admin) 70%, #3d5f9c);
+    color: #fff; padding: 34px 20px 30px; text-align: center;
+  }
+  .hero h1 { margin: 0 0 8px; font-size: clamp(20px, 3.6vw, 27px); line-height: 1.4; }
+  .hero p { margin: 0 auto; max-width: 540px; font-size: 13.5px; opacity: .92; line-height: 1.6; }
+
+  .status-wrap {
+    max-width: 1080px; margin: -20px auto 0; padding: 0 16px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; position: relative; z-index: 5;
+  }
+  @media (max-width: 900px) { .status-wrap { grid-template-columns: repeat(2, 1fr); } }
+  .status-card { background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 10px 24px rgba(15,30,60,.10); }
+  .status-card h2 { margin: 0 0 6px; font-size: 11.5px; color: var(--muted); font-weight: 700; }
+  .status-card .big { font-size: 19px; font-weight: 800; }
+  .status-card .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .wrap { max-width: 1080px; margin: 30px auto; padding: 0 16px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .tabs button {
+    border: 1px solid var(--border); background: #fff; padding: 8px 16px; border-radius: 999px;
+    font-size: 13px; cursor: pointer; font-weight: 600; color: var(--ink);
+  }
+  .tabs button.active { background: var(--admin); color: #fff; border-color: var(--admin); }
+  .tabpane { display: none; }
+  .tabpane.active { display: block; }
+
+  .panel { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .panel-head h2 { margin: 0; font-size: 15px; }
+  .btn-csv { background: var(--admin-light); color: var(--admin-dark); border: none; padding: 7px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.8px; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  th { background: var(--bg); font-size: 11px; color: var(--muted); font-weight: 700; }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; }
+  .limit-input { width: 84px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 12.5px; text-align: right; }
+  .name-cell b { display: block; }
+  .name-cell span { color: var(--muted); font-size: 11px; }
+  .tag { font-size: 10.5px; padding: 2px 8px; border-radius: 999px; font-weight: 700; display: inline-block; }
+  .tag.ok { background: #e2f3e2; color: var(--green); }
+  .tag.over { background: #fdeaea; color: var(--red); }
+  .tag.none { background: var(--bg); color: var(--muted); }
+  .status-pill { font-size: 10.5px; padding: 3px 9px; border-radius: 999px; font-weight: 700; }
+  .status-pill.대기 { background: var(--admin-light); color: var(--admin-dark); }
+  .status-pill.완료 { background: #e2f3e2; color: var(--green); }
+  .status-pill.미구매 { background: var(--bg); color: var(--muted); }
+  .btn-settle { background: var(--admin); color: #fff; border: none; padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+  .impact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 18px; }
+  .impact-grid .tile { background: var(--admin-light); border-radius: 12px; padding: 16px; text-align: center; }
+  .impact-grid .tile .val { font-size: 22px; font-weight: 800; color: var(--admin-dark); }
+  .impact-grid .tile .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .bar-row { display: flex; align-items: center; gap: 10px; padding: 6px 18px; font-size: 12.5px; }
+  .bar-row .bar-label { width: 90px; flex: 0 0 auto; color: var(--muted); }
+  .bar-track { flex: 1; height: 10px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--admin), #5b7fc4); }
+  .bar-val { width: 90px; flex: 0 0 auto; text-align: right; font-weight: 700; }
+
+  .measured-split { display: flex; align-items: center; gap: 10px; padding: 4px 18px 18px; font-size: 12px; color: var(--muted); }
+  .measured-split .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+  .disclaimer { margin: 0 18px 18px; padding: 12px 14px; background: #fff8e8; border: 1px solid #f0e0b0; border-radius: 10px; font-size: 11.5px; color: #7a5c1e; line-height: 1.6; }
+
+  .farm-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 18px; }
+  .farm-summary .card { background: var(--bg); border-radius: 10px; padding: 12px 14px; }
+  .farm-summary .card h3 { margin: 0 0 4px; font-size: 13.5px; }
+  .farm-summary .card .meta { font-size: 11px; color: var(--muted); }
+
+  .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 30px 0; }
+  .rule-note { font-size: 11px; color: var(--muted); padding: 12px 18px; border-top: 1px dashed var(--border); line-height: 1.6; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+    background: var(--admin-dark); color: #fff; padding: 10px 18px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: all .25s; z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  footer { max-width: 1080px; margin: 10px auto 30px; padding: 0 16px; font-size: 11px; color: var(--muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="brand"><span class="logo">🏢</span> 그린포트 총무센터</div>
+  <div class="links">
+    <a href="index.html">🛍️ 쇼핑몰</a>
+    <a href="farmer.html">🚜 농가센터</a>
+    <a href="operator.html">⚙️ 운영자 콘솔</a>
+  </div>
+</div>
+
+<section class="hero">
+  <h1>상품권보다 쉬운 정산,<br>임직원 한도관리 &amp; 자동정산 리포트</h1>
+  <p>영수증 확인·수기 정산 없이 임직원 실비 카드 결제 내역과 사내 예산 차감분을 자동으로 대조 정산합니다. 추가 행정부담 없이 ESG 사회공헌 성과까지 함께 확인하세요.</p>
+</section>
+
+<div class="status-wrap">
+  <div class="status-card">
+    <h2>참여 임직원</h2>
+    <div class="big" id="stat-participation">0 / 0명</div>
+    <div class="sub" id="stat-participation-rate">참여율 0%</div>
+  </div>
+  <div class="status-card">
+    <h2>총 위탁거래액(선주문)</h2>
+    <div class="big" id="stat-total">0원</div>
+    <div class="sub">전량 로컬 농가 직송 계약</div>
+  </div>
+  <div class="status-card">
+    <h2>회사 환급 예정 총액</h2>
+    <div class="big" id="stat-refund">0원</div>
+    <div class="sub">한도 내 실비 정산분</div>
+  </div>
+  <div class="status-card">
+    <h2>정산 완료 / 대기</h2>
+    <div class="big" id="stat-settled">0원 / 0원</div>
+    <div class="sub">완료 · 대기 금액</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="tabs" id="tabs">
+    <button data-tab="settle" class="active">💰 정산 리포트</button>
+    <button data-tab="esg">🌿 사회공헌 리포트</button>
+    <button data-tab="products">🌾 입점 상품 현황</button>
+  </div>
+
+  <div class="tabpane active" id="tab-settle">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>임직원 한도 설정 &amp; 사후 자동정산 내역</h2>
+        <button class="btn-csv" id="csv-btn">⬇ CSV 다운로드</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>사원 정보</th>
+            <th class="num">지급 한도</th>
+            <th class="num">구매 총액</th>
+            <th>정산 구분</th>
+            <th class="num">환급 예정액</th>
+            <th>정산 상태</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="settle-body"></tbody>
+      </table>
+      <p class="rule-note">※ 임직원은 본인 카드로 직접 결제하고, 회사는 지급 한도 내에서 결제액만큼 사후 환급합니다. 그린포트는 결제 자금을 사전에 보관·이전하지 않는 실비결제-후정산 구조입니다. 한도관리·자동정산 리포트는 농가 판매 수수료 매출 구조상 무상으로 제공됩니다.</p>
+    </div>
+  </div>
+
+  <div class="tabpane" id="tab-esg">
+    <div class="panel">
+      <div class="panel-head"><h2>스마트팜 ESG 사회공헌 성과</h2></div>
+      <div class="impact-grid">
+        <div class="tile"><div class="val" id="esg-water">0 L</div><div class="label">💧 누적 용수 절약</div></div>
+        <div class="tile"><div class="val" id="esg-soil">0 kg</div><div class="label">🌱 누적 토양 보호</div></div>
+        <div class="tile"><div class="val" id="esg-carbon">0 g</div><div class="label">🍃 누적 탄소 저감</div></div>
+      </div>
+      <div class="bar-row"><span class="bar-label">용수 절약</span><div class="bar-track"><div class="bar-fill" id="bar-water"></div></div><span class="bar-val" id="bar-water-val">0 L</span></div>
+      <div class="bar-row"><span class="bar-label">토양 보호</span><div class="bar-track"><div class="bar-fill" id="bar-soil"></div></div><span class="bar-val" id="bar-soil-val">0 kg</span></div>
+      <div class="bar-row"><span class="bar-label">탄소 저감</span><div class="bar-track"><div class="bar-fill" id="bar-carbon"></div></div><span class="bar-val" id="bar-carbon-val">0 g</span></div>
+      <div class="measured-split" id="measured-split"></div>
+      <div class="disclaimer">
+        ⚠️ 이 리포트는 GRI·KSSB 등 공식 공시 프레임워크가 요구하는 정량 지표가 아닌, 사내 커뮤니케이션(명절 뉴스레터 등)과 지속가능경영보고서 "사회공헌 활동 사례"용 참고 자료입니다.
+        비교 지표 산출 기준(가정용 물 사용량 통계 등)은 환경부·통계청 등 공신력 있는 출처를 인용해 별도로 문서화해야 하며, 계측기 미보유 농가의 수치는 업계 평균 추정치로 실측 데이터와 구분 표기합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpane" id="tab-products">
+    <div class="panel">
+      <div class="panel-head"><h2>입점 농가 &amp; 상품 현황</h2></div>
+      <div class="farm-summary" id="farm-summary"></div>
+      <table>
+        <thead>
+          <tr><th>농가</th><th>상품</th><th>카테고리</th><th class="num">가격</th><th class="num">재고</th><th>데이터 유형</th><th>저탄소 인증</th></tr>
+        </thead>
+        <tbody id="product-body"></tbody>
+      </table>
+      <p class="rule-note">※ 가격·재고·상품 정보 수정은 각 농가가 <a href="farmer.html">농가센터</a>에서 직접 진행합니다. 이 화면은 총무 오버사이트용 조회 전용입니다.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  ※ 이 페이지는 로그인·인증 없이 누구나 볼 수 있는 데모 프로토타입입니다. 실 서비스에서는 총무·인사 담당자 권한 인증이 필요합니다.
+  <br>※ 모든 수치는 이 브라우저(localStorage)에 저장된 데모 데이터이며, 쇼핑몰·농가센터에서 발생한 실제 조작 내역이 반영됩니다.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="store.js"></script>
+<script>
+  const won = gpWon;
+  const toastEl = document.getElementById("toast");
+  let toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1400);
+  }
+
+  document.getElementById("tabs").addEventListener("click", e => {
+    const tab = e.target.dataset.tab;
+    if (!tab) return;
+    document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+    document.querySelectorAll(".tabpane").forEach(p => p.classList.toggle("active", p.id === `tab-${tab}`));
+  });
+
+  function employeeOrders(empId, orders) {
+    return orders.filter(o => o.employeeId === empId);
+  }
+
+  function renderSettle() {
+    const employees = gpGetEmployees();
+    const orders = gpGetOrders();
+    const body = document.getElementById("settle-body");
+
+    body.innerHTML = employees.map(emp => {
+      const own = employeeOrders(emp.id, orders);
+      const purchaseTotal = own.reduce((s, o) => s + o.total, 0);
+      const refundTotal = own.reduce((s, o) => s + o.refund, 0);
+      const selfPayTotal = own.reduce((s, o) => s + o.selfPay, 0);
+      const hasOrder = own.length > 0;
+      const allSettled = hasOrder && own.every(o => o.settled);
+
+      const kind = !hasOrder ? `<span class="tag none">미구매</span>`
+        : selfPayTotal > 0 ? `<span class="tag over">한도초과 (본인부담 ${won(selfPayTotal)})</span>`
+        : `<span class="tag ok">한도 내 완납</span>`;
+      const statusLabel = !hasOrder ? "미구매" : allSettled ? "완료" : "대기";
+
+      return `<tr>
+        <td class="name-cell"><b>${emp.name}</b><span>${emp.dept}</span></td>
+        <td class="num"><input class="limit-input" type="number" min="0" step="1000" value="${emp.limit}" data-emp="${emp.id}"></td>
+        <td class="num">${hasOrder ? won(purchaseTotal) : "-"}</td>
+        <td>${kind}</td>
+        <td class="num">${hasOrder ? won(refundTotal) : "-"}</td>
+        <td><span class="status-pill ${statusLabel}">${statusLabel}</span></td>
+        <td>${hasOrder && !allSettled ? `<button class="btn-settle" data-settle="${emp.id}">정산 완료 처리</button>` : ""}</td>
+      </tr>`;
+    }).join("");
+
+    const participating = employees.filter(e => employeeOrders(e.id, orders).length > 0).length;
+    document.getElementById("stat-participation").textContent = `${participating} / ${employees.length}명`;
+    document.getElementById("stat-participation-rate").textContent = `참여율 ${employees.length ? Math.round(participating / employees.length * 100) : 0}%`;
+
+    const totalAll = orders.reduce((s, o) => s + o.total, 0);
+    const refundAll = orders.reduce((s, o) => s + o.refund, 0);
+    const settledAmount = orders.filter(o => o.settled).reduce((s, o) => s + o.refund, 0);
+    const pendingAmount = refundAll - settledAmount;
+    document.getElementById("stat-total").textContent = won(totalAll);
+    document.getElementById("stat-refund").textContent = won(refundAll);
+    document.getElementById("stat-settled").textContent = `${won(settledAmount)} / ${won(pendingAmount)}`;
+  }
+
+  document.getElementById("settle-body").addEventListener("change", e => {
+    const empId = e.target.dataset.emp;
+    if (!empId) return;
+    const employees = gpGetEmployees();
+    const emp = employees.find(e => e.id === empId);
+    emp.limit = Math.max(0, Number(e.target.value) || 0);
+    gpSaveEmployees(employees);
+    toast(`${emp.name}님 한도를 ${won(emp.limit)}로 변경했어요`);
+    renderSettle();
+  });
+
+  document.getElementById("settle-body").addEventListener("click", e => {
+    const empId = e.target.dataset.settle;
+    if (!empId) return;
+    const orders = gpGetOrders();
+    employeeOrders(empId, orders).forEach(o => gpSetOrderSettled(o.id, true));
+    toast("정산을 완료 처리했어요");
+    renderSettle();
+  });
+
+  document.getElementById("csv-btn").addEventListener("click", () => {
+    const employees = gpGetEmployees();
+    const orders = gpGetOrders();
+    const rows = [["사원명", "부서", "지급한도", "구매총액", "환급예정액", "본인부담금", "정산상태"]];
+    employees.forEach(emp => {
+      const own = employeeOrders(emp.id, orders);
+      const purchaseTotal = own.reduce((s, o) => s + o.total, 0);
+      const refundTotal = own.reduce((s, o) => s + o.refund, 0);
+      const selfPayTotal = own.reduce((s, o) => s + o.selfPay, 0);
+      const status = own.length === 0 ? "미구매" : own.every(o => o.settled) ? "완료" : "대기";
+      rows.push([emp.name, emp.dept, emp.limit, purchaseTotal, refundTotal, selfPayTotal, status]);
+    });
+    const csv = "﻿" + rows.map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `그린포트_정산리포트_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  function renderEsg() {
+    const products = gpGetProducts();
+    const orders = gpGetOrders();
+    const impact = { water: 0, soil: 0, carbon: 0 };
+    let measuredQty = 0, totalQty = 0;
+
+    orders.forEach(o => o.items.forEach(it => {
+      const p = products.find(p => p.id === it.productId);
+      if (!p) return;
+      impact.water += (p.water || 0) * it.qty;
+      impact.soil += (p.soil || 0) * it.qty;
+      impact.carbon += (p.carbon || 0) * it.qty;
+      totalQty += it.qty;
+      if (p.measured) measuredQty += it.qty;
+    }));
+
+    document.getElementById("esg-water").textContent = `${impact.water.toLocaleString("ko-KR")} L`;
+    document.getElementById("esg-soil").textContent = `${impact.soil.toFixed(1)} kg`;
+    document.getElementById("esg-carbon").textContent = `${impact.carbon.toLocaleString("ko-KR")} g`;
+
+    const maxVal = Math.max(impact.water, impact.soil, impact.carbon, 1);
+    document.getElementById("bar-water").style.width = `${impact.water / maxVal * 100}%`;
+    document.getElementById("bar-soil").style.width = `${impact.soil / maxVal * 100}%`;
+    document.getElementById("bar-carbon").style.width = `${impact.carbon / maxVal * 100}%`;
+    document.getElementById("bar-water-val").textContent = `${impact.water.toLocaleString("ko-KR")} L`;
+    document.getElementById("bar-soil-val").textContent = `${impact.soil.toFixed(1)} kg`;
+    document.getElementById("bar-carbon-val").textContent = `${impact.carbon.toLocaleString("ko-KR")} g`;
+
+    const measuredPct = totalQty ? Math.round(measuredQty / totalQty * 100) : 0;
+    document.getElementById("measured-split").innerHTML = totalQty
+      ? `<span><span class="dot" style="background:var(--admin)"></span>실측 데이터 ${measuredPct}%</span><span><span class="dot" style="background:#c9c4b0"></span>업계 평균 추정치 ${100 - measuredPct}%</span>`
+      : `아직 집계된 선주문이 없습니다.`;
+  }
+
+  function renderProducts() {
+    const products = gpGetProducts();
+    const farmRoster = gpGetFarms();
+    const isCertified = name => farmRoster.find(f => f.name === name)?.certified;
+    const farms = [...new Set(products.map(p => p.farm))];
+
+    document.getElementById("farm-summary").innerHTML = farms.map(farm => {
+      const list = products.filter(p => p.farm === farm);
+      const stock = list.reduce((s, p) => s + p.stock, 0);
+      return `<div class="card">
+        <h3>${farm} ${isCertified(farm) ? "🌿" : ""}</h3>
+        <div class="meta">${list[0].region} · 상품 ${list.length}종 · 총 재고 ${stock}세트 · ${list[0].measured ? "실측 계측 농가" : "추정치 농가"}</div>
+      </div>`;
+    }).join("");
+
+    document.getElementById("product-body").innerHTML = products.map(p => `
+      <tr>
+        <td>${p.farm}</td>
+        <td>${p.emoji} ${p.name}</td>
+        <td>${p.category}</td>
+        <td class="num">${won(p.price)}</td>
+        <td class="num">${p.stock}세트</td>
+        <td>${p.measured ? `<span class="tag ok">실측</span>` : `<span class="tag none">추정치</span>`}</td>
+        <td>${isCertified(p.farm) ? `<span class="tag ok">🌿 인증</span>` : `<span class="tag none">-</span>`}</td>
+      </tr>
+    `).join("");
+  }
+
+  function renderAll() {
+    renderSettle();
+    renderEsg();
+    renderProducts();
+  }
+  renderAll();
+</script>
+
+</body>
+</html>
