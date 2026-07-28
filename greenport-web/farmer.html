@@ -74,6 +74,8 @@
   .form-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
   .btn-save { background: var(--accent); color: #fff; border: none; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
   .btn-cancel { background: var(--bg); color: var(--ink); border: 1px solid var(--border); padding: 9px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  .btn-sensor { background: #2f6b9c; color: #fff; border: none; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .btn-sensor:hover { background: #24547d; }
 
   .catalog { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
   .card { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
@@ -218,7 +220,7 @@
             <label>출하일(채취일) — 밀양 혁신밸리 실측 데이터 자동 조회</label>
             <div style="display:flex;gap:8px;">
               <input id="f-harvest-date" type="date" style="flex:0 0 auto;">
-              <button type="button" id="f-fetch-sensor" class="btn-cancel">🛰️ 실측 데이터 조회</button>
+              <button type="button" id="f-fetch-sensor" class="btn-sensor">🛰️ 실측 데이터 조회</button>
             </div>
             <div id="f-sensor-preview" style="font-size:11px;color:var(--muted);margin-top:6px;">${fetchedRealStats ? `✅ 조회됨: 내부온도 ${fetchedRealStats.tempMin}~${fetchedRealStats.tempMax}℃ · 습도 ${fetchedRealStats.humidityMin}~${fetchedRealStats.humidityMax}%` : ""}</div>
           </div>` : ""}
