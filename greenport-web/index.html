@@ -433,7 +433,7 @@
             ${isCertified(p) ? `<span class="ribbon eco">🌿 저탄소 인증</span>` : ""}
             ${p.badge ? `<span class="ribbon ${p.badge.type}">${p.badge.text}</span>` : ""}
           </span>
-          ${p.gallery?.[0]?.url ? `<span class="sample-tag">📷 예시 이미지</span>` : p.emoji}
+          ${p.gallery?.[0]?.url ? (p.gallery[0].isSample ? `<span class="sample-tag">📷 예시 이미지</span>` : "") : p.emoji}
           <span class="stock ${p.stock <= 8 ? "low" : ""}">잔여 ${p.stock}세트</span>
           <span class="peek">🔍 자세히 보기</span>
         </div>
@@ -514,7 +514,7 @@
     modalContent.innerHTML = `
       <div class="modal-gallery-main ${shot.url ? "" : visualClass}" style="${shot.url ? `background-image:url('${shot.url}')` : ""}">
         ${shot.url ? "" : shot.emoji}
-        ${shot.url ? `<span class="modal-gallery-sample-badge">📷 예시 이미지</span>` : ""}
+        ${shot.isSample ? `<span class="modal-gallery-sample-badge">📷 예시 이미지</span>` : ""}
         <span class="modal-gallery-caption">${shot.caption}</span>
       </div>
       <div class="modal-gallery-thumbs">
