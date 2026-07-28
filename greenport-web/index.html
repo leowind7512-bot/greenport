@@ -108,9 +108,14 @@
   }
   .card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(20,50,25,.12); }
 
-  .card-visual { position: relative; height: 118px; display: flex; align-items: center; justify-content: center; font-size: 54px; }
-  .card-visual.fruit { background: linear-gradient(135deg, #fff1de, #ffd9a0); }
-  .card-visual.veg { background: linear-gradient(135deg, #e6f6e2, #bfe8b8); }
+  .card-visual { position: relative; height: 118px; display: flex; align-items: center; justify-content: center; font-size: 54px; background-size: cover; background-position: center; }
+  .card-visual.fruit { background-color: #fff1de; background-image: linear-gradient(135deg, #fff1de, #ffd9a0); }
+  .card-visual.veg { background-color: #e6f6e2; background-image: linear-gradient(135deg, #e6f6e2, #bfe8b8); }
+  .card-visual.photo { background-image: none; }
+  .card-visual .sample-tag {
+    position: absolute; bottom: 6px; left: 8px; background: rgba(0,0,0,.45); color: #fff;
+    font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 999px; letter-spacing: .02em;
+  }
   .ribbon-stack { position: absolute; top: 9px; left: 9px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
   .ribbon { font-size: 10px; font-weight: 800; padding: 4px 9px; border-radius: 999px; color: #fff; letter-spacing: -.2px; }
   .ribbon.hot { background: var(--amber); }
@@ -192,16 +197,21 @@
   }
   .modal-gallery-main {
     height: 240px; display: flex; align-items: center; justify-content: center; position: relative;
-    font-size: 100px; border-radius: 18px 18px 0 0;
+    font-size: 100px; border-radius: 18px 18px 0 0; background-size: cover; background-position: center;
   }
   .modal-gallery-caption {
-    position: absolute; bottom: 10px; left: 14px; background: rgba(0,0,0,.4); color: #fff;
+    position: absolute; bottom: 10px; left: 14px; background: rgba(0,0,0,.5); color: #fff;
     font-size: 11px; padding: 3px 10px; border-radius: 999px;
+  }
+  .modal-gallery-sample-badge {
+    position: absolute; top: 10px; left: 14px; background: rgba(255,255,255,.92); color: #6b4b28;
+    font-size: 10px; font-weight: 700; letter-spacing: .03em; padding: 3px 9px; border-radius: 999px;
   }
   .modal-gallery-thumbs { display: flex; gap: 8px; padding: 12px 24px 0; }
   .modal-gallery-thumbs button {
-    width: 52px; height: 52px; border-radius: 10px; border: 2px solid var(--border); background: var(--bg);
-    font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto;
+    width: 52px; height: 52px; border-radius: 10px; border: 2px solid var(--border); background-color: var(--bg);
+    background-size: cover; background-position: center;
+    font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto; padding: 0;
   }
   .modal-gallery-thumbs button.active { border-color: var(--green); }
   .modal-body { padding: 16px 24px 26px; }
@@ -418,12 +428,12 @@
       const visualClass = p.category === "과일" ? "fruit" : "veg";
       return `
       <div class="card">
-        <div class="card-visual ${visualClass}" data-detail="${p.id}">
+        <div class="card-visual ${p.gallery?.[0]?.url ? "photo" : visualClass}" data-detail="${p.id}" style="${p.gallery?.[0]?.url ? `background-image:url('${p.gallery[0].url}')` : ""}">
           <span class="ribbon-stack">
             ${isCertified(p) ? `<span class="ribbon eco">🌿 저탄소 인증</span>` : ""}
             ${p.badge ? `<span class="ribbon ${p.badge.type}">${p.badge.text}</span>` : ""}
           </span>
-          ${p.emoji}
+          ${p.gallery?.[0]?.url ? `<span class="sample-tag">📷 예시 이미지</span>` : p.emoji}
           <span class="stock ${p.stock <= 8 ? "low" : ""}">잔여 ${p.stock}세트</span>
           <span class="peek">🔍 자세히 보기</span>
         </div>
@@ -438,7 +448,6 @@
             <div><div class="v">🌱${p.soil}kg</div><div class="l">토양 보호*</div></div>
             <div><div class="v">🍃${p.carbon}g</div><div class="l">탄소 저감*</div></div>
           </div>
-          ${sensorPanel(p.realStats, true)}
           <div class="price-row"><span class="price">${won(p.price)}</span><small>농가 원가보전</small></div>
           ${qty > 0
             ? `<div class="qty-stepper">
@@ -503,9 +512,13 @@
     const shot = p.gallery[galleryIdx];
     const qty = cart[p.id] || 0;
     modalContent.innerHTML = `
-      <div class="modal-gallery-main ${visualClass}">${shot.emoji}<span class="modal-gallery-caption">${shot.caption}</span></div>
+      <div class="modal-gallery-main ${shot.url ? "" : visualClass}" style="${shot.url ? `background-image:url('${shot.url}')` : ""}">
+        ${shot.url ? "" : shot.emoji}
+        ${shot.url ? `<span class="modal-gallery-sample-badge">📷 예시 이미지</span>` : ""}
+        <span class="modal-gallery-caption">${shot.caption}</span>
+      </div>
       <div class="modal-gallery-thumbs">
-        ${p.gallery.map((g, i) => `<button data-thumb="${i}" class="${i === galleryIdx ? "active" : ""}">${g.emoji}</button>`).join("")}
+        ${p.gallery.map((g, i) => `<button data-thumb="${i}" class="${i === galleryIdx ? "active" : ""}" style="${g.url ? `background-image:url('${g.url}')` : ""}">${g.url ? "" : g.emoji}</button>`).join("")}
       </div>
       <div class="modal-body">
         <div class="chips">
