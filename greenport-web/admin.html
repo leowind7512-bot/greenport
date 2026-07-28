@@ -102,6 +102,48 @@
 
   .disclaimer { margin: 0 18px 18px; padding: 12px 14px; background: #fff8e8; border: 1px solid #f0e0b0; border-radius: 10px; font-size: 11.5px; color: #7a5c1e; line-height: 1.6; }
 
+  /* --- 상생 리포트 --- */
+  .report-doc { background: #fdfcf8; border: 1px solid var(--border); }
+  .report-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: #fff; }
+  .report-toolbar .badge { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--muted); background: var(--bg); padding: 4px 10px; border-radius: 999px; }
+  .btn-pdf { background: var(--green); color: #fff; border: none; padding: 8px 16px; border-radius: 999px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-pdf:disabled { opacity: .6; cursor: wait; }
+
+  #report-capture { padding: 24px 34px 4px; }
+  .report-masthead { border-bottom: 1px solid #ddd7c4; padding-bottom: 14px; margin-bottom: 18px; }
+  .report-eyebrow { font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin: 0 0 8px; }
+  .report-title { font-size: clamp(20px, 3vw, 25px); font-weight: 800; margin: 0 0 8px; color: var(--ink); }
+  .report-meta { font-size: 12.5px; color: var(--muted); display: flex; gap: 18px; flex-wrap: wrap; }
+  .report-meta b { color: var(--ink); }
+
+  .report-section { margin-bottom: 18px; break-inside: avoid; page-break-inside: avoid; }
+  .report-h2 { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #6b7a56; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; }
+  .report-h2::after { content: ""; flex: 1; height: 1px; background: #e3ded0; }
+
+  .report-context { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+  .report-context .item { background: #f4f1e6; border-radius: 8px; padding: 12px 14px; }
+  .report-context .item .num { font-size: 17px; font-weight: 800; color: var(--ink); }
+  .report-context .item .lbl { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  .farm-cards { display: flex; flex-direction: column; gap: 8px; }
+  .farm-card2 { display: grid; grid-template-columns: 56px 1fr; gap: 14px; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; break-inside: avoid; page-break-inside: avoid; }
+  .farm-card2 .icon { width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(160deg, var(--green), #5c8a49); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .farm-card2 .name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+  .farm-card2 .meta { font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+  .farm-card2 .sensor { font-size: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .farm-card2 .sensor b { color: var(--green); }
+
+  .quote-box2 { background: #f4f1e6; border-left: 3px solid var(--green); border-radius: 4px; padding: 12px 16px; font-size: 13.5px; margin-bottom: 8px; position: relative; break-inside: avoid; page-break-inside: avoid; }
+  .quote-box2 .tag2 { position: absolute; top: 10px; right: 14px; font-size: 10px; font-weight: 700; letter-spacing: .05em; color: var(--muted); text-transform: uppercase; }
+
+  .method-list2 { list-style: none; padding: 0; margin: 0; }
+  .method-list2 li { display: grid; grid-template-columns: 120px 1fr; gap: 12px; font-size: 12px; padding: 8px 0; border-bottom: 1px dashed #e3ded0; }
+  .method-list2 li:last-child { border-bottom: none; }
+  .method-list2 .k { color: #6b7a56; font-weight: 700; }
+  .method-list2 .v { color: var(--muted); }
+
+  .report-footer { font-size: 10.5px; color: var(--muted); border-top: 1px solid #e3ded0; padding: 10px 0 4px; break-inside: avoid; page-break-inside: avoid; }
+
   .farm-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 18px; }
   .farm-summary .card { background: var(--bg); border-radius: 10px; padding: 12px 14px; }
   .farm-summary .card h3 { margin: 0 0 4px; font-size: 13.5px; }
@@ -162,7 +204,7 @@
 <div class="wrap">
   <div class="tabs" id="tabs">
     <button data-tab="settle" class="active">💰 정산 리포트</button>
-    <button data-tab="esg">🌿 사회공헌 리포트</button>
+    <button data-tab="esg">🌿 상생 리포트</button>
     <button data-tab="products">🌾 입점 상품 현황</button>
   </div>
 
@@ -191,20 +233,65 @@
   </div>
 
   <div class="tabpane" id="tab-esg">
-    <div class="panel">
-      <div class="panel-head"><h2>스마트팜 ESG 사회공헌 성과</h2></div>
-      <div class="impact-grid">
-        <div class="tile"><div class="val" id="esg-water">0 L</div><div class="label">💧 누적 용수 절약</div></div>
-        <div class="tile"><div class="val" id="esg-soil">0 kg</div><div class="label">🌱 누적 토양 보호</div></div>
-        <div class="tile"><div class="val" id="esg-carbon">0 g</div><div class="label">🍃 누적 탄소 저감</div></div>
+    <div class="panel report-doc">
+      <div class="report-toolbar">
+        <span class="badge" id="report-period-badge">기간 집계 중</span>
+        <button class="btn-pdf" id="pdf-btn">⬇ PDF 다운로드</button>
       </div>
-      <div class="bar-row"><span class="bar-label">용수 절약</span><div class="bar-track"><div class="bar-fill" id="bar-water"></div></div><span class="bar-val" id="bar-water-val">0 L</span></div>
-      <div class="bar-row"><span class="bar-label">토양 보호</span><div class="bar-track"><div class="bar-fill" id="bar-soil"></div></div><span class="bar-val" id="bar-soil-val">0 kg</span></div>
-      <div class="bar-row"><span class="bar-label">탄소 저감</span><div class="bar-track"><div class="bar-fill" id="bar-carbon"></div></div><span class="bar-val" id="bar-carbon-val">0 g</span></div>
-      <div class="measured-split" id="measured-split"></div>
-      <div class="disclaimer">
-        ⚠️ 이 리포트는 GRI·KSSB 등 공식 공시 프레임워크가 요구하는 정량 지표가 아닌, 사내 커뮤니케이션(명절 뉴스레터 등)과 지속가능경영보고서 "사회공헌 활동 사례"용 참고 자료입니다.
-        비교 지표 산출 기준(가정용 물 사용량 통계 등)은 환경부·통계청 등 공신력 있는 출처를 인용해 별도로 문서화해야 하며, 계측기 미보유 농가의 수치는 업계 평균 추정치로 실측 데이터와 구분 표기합니다.
+
+      <div id="report-capture">
+        <div class="report-masthead">
+          <p class="report-eyebrow">GreenPort · 상생 리포트</p>
+          <h1 class="report-title">임직원 명절 복지 상생 리포트</h1>
+          <div class="report-meta">
+            <span>발행일 <b id="report-date"></b></span>
+            <span>집계 기준 <b>그린포트 선주문·정산 데이터 전체</b></span>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h2 class="report-h2">환경 성과 요약</h2>
+          <div class="impact-grid" style="padding:0">
+            <div class="tile"><div class="val" id="esg-water">0 L</div><div class="label">💧 누적 용수 절약</div></div>
+            <div class="tile"><div class="val" id="esg-soil">0 kg</div><div class="label">🌱 누적 토양 보호</div></div>
+            <div class="tile"><div class="val" id="esg-carbon">0 g</div><div class="label">🍃 누적 탄소 저감</div></div>
+          </div>
+          <div class="bar-row" style="padding:14px 0 0"><span class="bar-label">용수 절약</span><div class="bar-track"><div class="bar-fill" id="bar-water"></div></div><span class="bar-val" id="bar-water-val">0 L</span></div>
+          <div class="bar-row" style="padding:6px 0"><span class="bar-label">토양 보호</span><div class="bar-track"><div class="bar-fill" id="bar-soil"></div></div><span class="bar-val" id="bar-soil-val">0 kg</span></div>
+          <div class="bar-row" style="padding:6px 0 0"><span class="bar-label">탄소 저감</span><div class="bar-track"><div class="bar-fill" id="bar-carbon"></div></div><span class="bar-val" id="bar-carbon-val">0 g</span></div>
+          <div class="measured-split" id="measured-split" style="padding:10px 0 0"></div>
+
+          <div class="report-context">
+            <div class="item"><div class="num" id="ctx-participation">0 / 0명</div><div class="lbl">참여 임직원 (참여율 0%)</div></div>
+            <div class="item"><div class="num" id="ctx-total">0원</div><div class="lbl">총 구매금액</div></div>
+            <div class="item"><div class="num" id="ctx-farms">0개 농가</div><div class="lbl">참여 협력 농가 수</div></div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h2 class="report-h2">협력 농가 소개</h2>
+          <div class="farm-cards" id="report-farms"></div>
+        </div>
+
+        <div class="report-section">
+          <h2 class="report-h2">지속가능경영보고서 인용 가이드</h2>
+          <div class="quote-box2" id="quote-formal"><span class="tag2">국문</span></div>
+          <div class="quote-box2" id="quote-internal"><span class="tag2">내부 공유용</span></div>
+        </div>
+
+        <div class="report-section" style="margin-bottom:8px">
+          <h2 class="report-h2">산출 방법론 및 출처</h2>
+          <ul class="method-list2">
+            <li><span class="k">환산 기준</span><span class="v">스마트팜 재배 대비 노지재배 물 사용량 비교 — 확정 시 농촌진흥청·통계청 등 공공통계 인용 예정(현재 업계 평균 추정치)</span></li>
+            <li><span class="k">실측 데이터</span><span class="v">스마트팜코리아 혁신밸리 Open API 연동, 출하일 기준 온습도 실측값</span></li>
+            <li><span class="k">집계 범위</span><span class="v">그린포트를 통해 등록된 전체 선주문 기준</span></li>
+            <li><span class="k">한계 및 표기</span><span class="v">공식 ESG 공시 지표(GRI·KSSB 등)가 아닌 사례성 참고자료이며, 계측기 미보유 농가는 업계 평균 추정치로 별도 표기</span></li>
+          </ul>
+        </div>
+
+        <div class="report-footer">
+          ※ 이 리포트는 로그인·인증 없이 볼 수 있는 데모 프로토타입 데이터를 기준으로 생성되었습니다. 실 서비스에서는 총무·인사 담당자 권한 인증 후 열람 가능하며, 회차별(명절 시즌별) 리포트로 발행됩니다.
+        </div>
       </div>
     </div>
   </div>
@@ -232,6 +319,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="store.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
   const won = gpWon;
   const toastEl = document.getElementById("toast");
@@ -340,8 +428,11 @@
   function renderEsg() {
     const products = gpGetProducts();
     const orders = gpGetOrders();
+    const employees = gpGetEmployees();
+    const farms = gpGetFarms();
     const impact = { water: 0, soil: 0, carbon: 0 };
     let measuredQty = 0, totalQty = 0;
+    const farmQty = {};
 
     orders.forEach(o => o.items.forEach(it => {
       const p = products.find(p => p.id === it.productId);
@@ -351,6 +442,7 @@
       impact.carbon += (p.carbon || 0) * it.qty;
       totalQty += it.qty;
       if (p.measured) measuredQty += it.qty;
+      farmQty[p.farm] = (farmQty[p.farm] || 0) + it.qty;
     }));
 
     document.getElementById("esg-water").textContent = `${impact.water.toLocaleString("ko-KR")} L`;
@@ -369,7 +461,67 @@
     document.getElementById("measured-split").innerHTML = totalQty
       ? `<span><span class="dot" style="background:var(--admin)"></span>실측 데이터 ${measuredPct}%</span><span><span class="dot" style="background:#c9c4b0"></span>업계 평균 추정치 ${100 - measuredPct}%</span>`
       : `아직 집계된 선주문이 없습니다.`;
+
+    // --- 상생 리포트 확장 영역 ---
+    const today = new Date();
+    document.getElementById("report-date").textContent = today.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
+    document.getElementById("report-period-badge").textContent = `${today.getFullYear()}년 명절 시즌 리포트`;
+
+    const participating = employees.filter(e => orders.some(o => o.employeeId === e.id)).length;
+    const participationRate = employees.length ? Math.round(participating / employees.length * 100) : 0;
+    document.getElementById("ctx-participation").textContent = `${participating} / ${employees.length}명`;
+    document.getElementById("ctx-participation").nextElementSibling.textContent = `참여 임직원 (참여율 ${participationRate}%)`;
+    document.getElementById("ctx-total").textContent = won(orders.reduce((s, o) => s + o.total, 0));
+    document.getElementById("ctx-farms").textContent = `${Object.keys(farmQty).length}개 농가`;
+
+    const farmCardsEl = document.getElementById("report-farms");
+    const activeFarmNames = Object.keys(farmQty);
+    if (!activeFarmNames.length) {
+      farmCardsEl.innerHTML = `<p class="empty" style="padding:0">아직 집계된 선주문이 없어 협력 농가 소개를 생성할 수 없습니다.</p>`;
+    } else {
+      farmCardsEl.innerHTML = activeFarmNames.map(farmName => {
+        const farmMeta = farms.find(f => f.name === farmName);
+        const sample = products.find(p => p.farm === farmName && p.realStats);
+        const emoji = products.find(p => p.farm === farmName)?.emoji || "🌾";
+        const sensor = sample
+          ? `<span>실측 내부온도 <b>${sample.realStats.tempMin}~${sample.realStats.tempMax}℃</b></span><span>실측 내부습도 <b>${sample.realStats.humidityMin}~${sample.realStats.humidityMax}%</b></span><span>조회일 <b>${sample.realStats.measDate}</b></span>`
+          : `<span>실측 계측 데이터 미보유 — 업계 평균 추정치 적용</span>`;
+        return `<div class="farm-card2">
+          <div class="icon">${emoji}</div>
+          <div>
+            <div class="name">${farmName}${farmMeta?.certified ? " 🌿" : ""}</div>
+            <div class="meta">${farmMeta?.region || ""} · 이번 시즌 ${farmQty[farmName]}세트 선주문</div>
+            <div class="sensor">${sensor}</div>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    document.getElementById("quote-formal").innerHTML += totalQty
+      ? `당사는 이번 명절 복지를 상품권 대신 지역 스마트팜 농산물 구매로 전환하여, 임직원 ${participating}명이 참여한 결과 누적 용수 ${Math.round(impact.water).toLocaleString("ko-KR")}L 절감 효과를 거두었습니다.`
+      : `아직 집계된 선주문이 없어 인용 문구를 생성할 수 없습니다.`;
+    document.getElementById("quote-internal").innerHTML += totalQty
+      ? `이번 명절, 여러분의 선택이 지역 농가와 지역 경제에 힘을 보탰습니다 — 참여해주신 ${participating}분께 감사드립니다.`
+      : `아직 집계된 선주문이 없어 인용 문구를 생성할 수 없습니다.`;
   }
+
+  document.getElementById("pdf-btn").addEventListener("click", () => {
+    const btn = document.getElementById("pdf-btn");
+    btn.disabled = true;
+    btn.textContent = "생성 중...";
+    const el = document.getElementById("report-capture");
+    html2pdf().set({
+      margin: 10,
+      filename: `그린포트_상생리포트_${new Date().toISOString().slice(0, 10)}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["css", "avoid-all"], avoid: [".report-section", ".farm-card2", ".quote-box2"] }
+    }).from(el).save().then(() => {
+      btn.disabled = false;
+      btn.textContent = "⬇ PDF 다운로드";
+    });
+  });
 
   function renderProducts() {
     const products = gpGetProducts();
